@@ -69,9 +69,7 @@ public void ConfigureServices(IServiceCollection services)
 #### Backend-Agnostic Example
 
 The `ISchemaManagerDelegator` abstracts away the backend providers, so that backends can 
-be determined at runtime, or multiple different backends can be used within the same project.
-The delegator also wraps all the schema interactions with a memory cache, so that get calls
-are cheap and performant. This example gets a schema from the object, and safely migrates it, assuming
+be determined at runtime, or multiple different backends can be used within the same project. This example gets a schema from the object, and safely migrates it, assuming
 the POCO was different last time the code was run (but works if nothing has changed as well).
 
 ```csharp

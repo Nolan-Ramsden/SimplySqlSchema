@@ -2,9 +2,9 @@
 {
     public interface ISchemaManagerDelegator
     {
-        ISchemaManager GetManager(BackendType backendType);
+        ISchemaManager GetSchemaManager(BackendType backendType);
 
-        ISchemaQuerier GetQuerier(BackendType backendType);
+        ISchemaQuerier GetSchemaQuerier(BackendType backendType);
 
         IObjectSchemaExtractor GetSchemaExtractor();
     }

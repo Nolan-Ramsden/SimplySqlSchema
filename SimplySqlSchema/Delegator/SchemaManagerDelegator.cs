@@ -7,20 +7,18 @@ namespace SimplySqlSchema.Delegator
 {
     public class SchemaManagerDelegator : ISchemaManagerDelegator
     {
-        protected ISchemaCache SchemaCache { get; }
         protected IObjectSchemaExtractor Extractor { get; }
         protected IEnumerable<ISchemaQuerier> Queriers { get; }
         protected IEnumerable<ISchemaManager> Managers { get; }
         
-        public SchemaManagerDelegator(ISchemaCache schemaCache = null, IEnumerable<ISchemaManager> managers = null, IEnumerable<ISchemaQuerier> queriers = null, IObjectSchemaExtractor extractor = null)
+        public SchemaManagerDelegator(IEnumerable<ISchemaManager> managers = null, IEnumerable<ISchemaQuerier> queriers = null, IObjectSchemaExtractor extractor = null)
         {
             this.Managers = managers;
             this.Queriers = queriers;
             this.Extractor = extractor;
-            this.SchemaCache = schemaCache;
         }
 
-        public ISchemaManager GetManager(BackendType backendType)
+        public ISchemaManager GetSchemaManager(BackendType backendType)
         {
             if (this.Managers == null)
             {
@@ -32,20 +30,10 @@ namespace SimplySqlSchema.Delegator
                 throw new NotImplementedException($"Not backend type manager for {backendType}");
             }
 
-            if (this.SchemaCache == null)
-            {
-                return manager;
-            }
-            else
-            {
-                return new CachedSchemaManager(
-                    impl: manager,
-                    schemaCache: this.SchemaCache
-                );
-            }
+            return manager;
         }
 
-        public ISchemaQuerier GetQuerier(BackendType backendType)
+        public ISchemaQuerier GetSchemaQuerier(BackendType backendType)
         {
             if (this.Queriers == null)
             {
@@ -66,17 +54,7 @@ namespace SimplySqlSchema.Delegator
                 throw new InvalidOperationException($"No SchemaExtractor registered");
             }
 
-            if (this.SchemaCache == null)
-            {
-                return this.Extractor;
-            }
-            else
-            {
-                return new CachedObjectSchemaExtractor(
-                    impl: this.Extractor,
-                    schemaCache: this.SchemaCache
-                );
-            }
+            return this.Extractor;
         }
     }
 }

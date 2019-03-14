@@ -2,7 +2,7 @@
 
 namespace SimplySqlSchema.Cache
 {
-    class CachedObjectSchemaExtractor : IObjectSchemaExtractor
+    public class CachedObjectSchemaExtractor : IObjectSchemaExtractor
     {
         protected ISchemaCache SchemaCache { get; } 
         protected IObjectSchemaExtractor Impl { get; }

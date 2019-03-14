@@ -23,7 +23,10 @@ namespace SimplySqlSchema.Cache
             if (schema == null)
             {
                 schema = await this.Impl.GetSchema(connection, objectName);
-                this.SchemaCache.Set(schema);
+                if (schema != null)
+                {
+                   this.SchemaCache.Set(schema);
+                }
             }
             return schema;
         }

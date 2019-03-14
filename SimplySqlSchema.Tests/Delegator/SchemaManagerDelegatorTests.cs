@@ -27,7 +27,6 @@ namespace SimplySqlSchema.Tests.Delegator
             this.SqlLiteManager = new SQLiteSchemaManager();
             this.Connection = new SQLiteConnection($"Data Source={TestDbFile};Version=3;");
             this.Delegator = new SchemaManagerDelegator(
-                schemaCache: new DictionarySchemaCache(),
                 managers: new [] { this.DefaultManager, this.SqlLiteManager }
             );
         }
@@ -49,7 +48,7 @@ namespace SimplySqlSchema.Tests.Delegator
                 }
             };
             await this.SqlLiteManager.CreateObject(this.Connection, schema);
-            var fetchedSchema = await this.Delegator.GetManager(BackendType.SQLite).GetSchema(this.Connection, schema.Name);
+            var fetchedSchema = await this.Delegator.GetSchemaManager(BackendType.SQLite).GetSchema(this.Connection, schema.Name);
 
             SchemaAssertions.AssertObjectSchemasEqual(schema, fetchedSchema);
         }
@@ -57,7 +56,7 @@ namespace SimplySqlSchema.Tests.Delegator
         [TestMethod]
         public void TestGetNonExistantManager()
         {
-            Assert.ThrowsException<NotImplementedException>(() => this.Delegator.GetManager(BackendType.SqlServer));
+            Assert.ThrowsException<NotImplementedException>(() => this.Delegator.GetSchemaManager(BackendType.SqlServer));
         }
 
         [TestCleanup]
