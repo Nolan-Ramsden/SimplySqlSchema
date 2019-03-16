@@ -29,6 +29,12 @@ namespace SimplySqlSchema.Tests.Manager
                         Type = typeof(string),
                         MaxLength = 100
                     },
+                    new ColumnSchema()
+                    {
+                        Name = "UpdatedAt",
+                        Type = typeof(DateTime),
+                        Nullable = true
+                    },
                 }.ToDictionary(c => c.Name)
         };
 

@@ -87,7 +87,7 @@ namespace SimplySqlSchema.Manager.Implementations
         protected virtual string CreateDefaultValueString(ColumnSchema schema)
         {
             return schema.Nullable ?
-                "" :
+                "DEFAULT NULL" :
                 $"DEFAULT {this.Mapper.GetDefaultExpression(CreateTypeString(schema))}";
         }
     }

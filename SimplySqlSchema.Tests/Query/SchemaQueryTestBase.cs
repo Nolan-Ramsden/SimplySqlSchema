@@ -29,12 +29,18 @@ namespace SimplySqlSchema.Tests.Query
                         Type = typeof(string),
                         MaxLength = 100
                     },
+                    new ColumnSchema()
+                    {
+                        Name = "EnumVal",
+                        Type = typeof(int),
+                    },
                 }.ToDictionary(c => c.Name)
         };
         protected QueryObject TestObject { get; set; } = new QueryObject()
         {
             Id = 15,
-            Val = "15"
+            Val = "15",
+            EnumVal = TestEnum.B
         };
 
         public async Task BaseTestInsertMultipleGetEntity()
@@ -44,7 +50,8 @@ namespace SimplySqlSchema.Tests.Query
             await this.Query.Insert(this.Connection, this.BaselineSchema, new QueryObject()
             {
                 Id = 12,
-                Val = 12.ToString()
+                Val = 12.ToString(),
+                EnumVal = TestEnum.A
             });
 
             var fetched = await this.Query.Get<QueryObject>(this.Connection, this.BaselineSchema, this.TestObject);
@@ -52,12 +59,14 @@ namespace SimplySqlSchema.Tests.Query
             Assert.IsNotNull(fetched, "Fetched object should not be null");
             Assert.AreEqual(15, fetched.Id, "Fetched object doesn't matched inserted");
             Assert.AreEqual("15", fetched.Val, "Fetched object doesn't matched inserted");
+            Assert.AreEqual(TestEnum.B, fetched.EnumVal, "Fetched object doesn't matched inserted");
         }
 
         public async Task BaseTestUpdateEntity()
         {
             await this.BaseTestInsertMultipleGetEntity();
             this.TestObject.Val = "100";
+            this.TestObject.EnumVal = TestEnum.C;
 
             await this.Query.Update(this.Connection, this.BaselineSchema, this.TestObject);
             var fetched = await this.Query.Get<QueryObject>(this.Connection, this.BaselineSchema, this.TestObject);
@@ -65,6 +74,7 @@ namespace SimplySqlSchema.Tests.Query
             Assert.IsNotNull(fetched, "Fetched object should not be null");
             Assert.AreEqual(15, fetched.Id, "Fetched object doesn't matched inserted");
             Assert.AreEqual("100", fetched.Val, "Fetched object doesn't matched inserted");
+            Assert.AreEqual(TestEnum.C, fetched.EnumVal, "Fetched object doesn't matched inserted");
         }
 
         public async Task BaseTestDeleteEntity()
@@ -82,6 +92,15 @@ namespace SimplySqlSchema.Tests.Query
             public int Id { get; set; }
 
             public string Val { get; set; }
+
+            public TestEnum EnumVal { get; set; }
+        }
+
+        public enum TestEnum
+        {
+            A = 1,
+            B = 2,
+            C = 3
         }
     }
 }

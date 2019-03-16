@@ -4,6 +4,7 @@ using System.Reflection;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
+using SimplySqlSchema.Attributes;
 
 namespace SimplySqlSchema.Extractor
 {
@@ -47,11 +48,21 @@ namespace SimplySqlSchema.Extractor
         protected ColumnSchema ParseProperty(PropertyInfo p, int keyIndex)
         {
             bool isKey = p.GetCustomAttribute<KeyAttribute>() != null;
+            Type columnType =
+                p.GetCustomAttribute<AliasTypeAttribute>()?.AsType ??
+                p.PropertyType;
+            if (columnType.IsEnum)
+            {
+                columnType = typeof(int);
+            }
+
+            Type underlyingType = Nullable.GetUnderlyingType(columnType);
+
             return new ColumnSchema()
             {
                 Name = p.Name,
-                Type = p.PropertyType,
-                Nullable = !p.PropertyType.IsValueType && !isKey,
+                Type = underlyingType ?? columnType,
+                Nullable = underlyingType != null,
                 MaxLength = p.GetCustomAttribute<MaxLengthAttribute>()?.Length,
                 KeyIndex = isKey ? (int?)keyIndex : null,
             };

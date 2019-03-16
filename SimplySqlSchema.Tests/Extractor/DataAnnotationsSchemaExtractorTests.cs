@@ -43,16 +43,26 @@ namespace SimplySqlSchema.Tests.Extractor
                     },
                     new ColumnSchema()
                     {
-                        Name = "Val1",
+                        Name = "CreatedAtNullable",
+                        Type = typeof(DateTime),
                         Nullable = true,
+                    },
+                    new ColumnSchema()
+                    {
+                        Name = "Val1",
                         Type = typeof(string),
                     },
                     new ColumnSchema()
                     {
                         Name = "Val2",
-                        Nullable = true,
                         MaxLength = 100,
                         Type = typeof(string),
+                    },
+                    new ColumnSchema()
+                    {
+                        Name = "Enum",
+                        Nullable = false,
+                        Type = typeof(int),
                     }
                 }.ToDictionary(c => c.Name)
             };
@@ -85,10 +95,21 @@ namespace SimplySqlSchema.Tests.Extractor
 
             public DateTime CreatedAt { get; set; }
 
+            public DateTime? CreatedAtNullable { get; set; }
+
             public string Val1 { get; set; }
 
             [MaxLength(100)]
             public string Val2 { get; set; }
+
+            public TestEnum Enum { get; set; }
+        }
+
+        public enum TestEnum
+        {
+            A = 1,
+            B = 2,
+            C = 3
         }
     }
 }
