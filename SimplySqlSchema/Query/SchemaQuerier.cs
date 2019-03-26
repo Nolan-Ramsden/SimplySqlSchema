@@ -8,7 +8,7 @@ namespace SimplySqlSchema.Query
 {
     public class SchemaQuerier : ISchemaQuerier
     {
-        public BackendType Backend => BackendType.Default;
+        public virtual BackendType Backend => BackendType.Default;
 
         public async virtual Task<T> Get<T>(IDbConnection connection, ObjectSchema schema, T keyedObject)
         {

@@ -27,7 +27,7 @@ namespace SimplySqlSchema.Delegator
             var manager = this.Managers.SingleOrDefault(m => m.Backend == backendType);
             if (manager == null)
             {
-                throw new NotImplementedException($"Not backend type manager for {backendType}");
+                throw new NotImplementedException($"No manager backend type  for {backendType}");
             }
 
             return manager;
@@ -42,7 +42,7 @@ namespace SimplySqlSchema.Delegator
             var querier = this.Queriers.SingleOrDefault(m => m.Backend == backendType);
             if (querier == null)
             {
-                throw new NotImplementedException($"Not backend type querier for {backendType}");
+                throw new NotImplementedException($"No querier for backend type {backendType}");
             }
             return querier;
         }

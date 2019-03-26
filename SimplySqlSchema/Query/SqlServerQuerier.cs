@@ -7,6 +7,8 @@ namespace SimplySqlSchema.Query
 {
     public class SqlServerQuerier : SchemaQuerier
     {
+        public override BackendType Backend => BackendType.SqlServer;
+
         public async override Task Update<T>(IDbConnection connection, ObjectSchema schema, T obj)
         {
             var names = schema.Columns.Select(c => c.Key);

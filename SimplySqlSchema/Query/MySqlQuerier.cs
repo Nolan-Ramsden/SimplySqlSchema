@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SimplySqlSchema.Query
+﻿namespace SimplySqlSchema.Query
 {
     public class MySqlQuerier : SchemaQuerier
     {
+        public override BackendType Backend => BackendType.MySql;
     }
 }

@@ -7,6 +7,8 @@ namespace SimplySqlSchema.Query
 {
     public class SQLiteQuerier : SchemaQuerier
     {
+        public override BackendType Backend => BackendType.SQLite;
+
         public async override Task Update<T>(IDbConnection connection, ObjectSchema schema, T obj)
         {
             var names = schema.Columns.Select(c => c.Key);
