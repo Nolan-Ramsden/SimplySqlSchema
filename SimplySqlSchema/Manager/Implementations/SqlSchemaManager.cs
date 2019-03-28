@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,14 +20,18 @@ namespace SimplySqlSchema.Manager.Implementations
 
         public virtual async Task CreateObject(IDbConnection connection, ObjectSchema objectSchema)
         {
-            var columnDefs = string.Join(
+            var statements = new List<string>();
+            statements.AddRange(objectSchema.Columns.Values.Select(CreateColumnString));
+            statements.Add(this.CreatePkStatement(objectSchema));
+
+            var allStatements = string.Join(
                 "," + Environment.NewLine,
-                objectSchema.Columns.Values.Select(CreateColumnString)
+                statements.Where(s => !string.IsNullOrEmpty(s))
             );
 
             await connection.ExecuteAsync($@"
                 CREATE TABLE {objectSchema.Name} (
-                    {columnDefs}
+                    {allStatements}
                 )
             ");
         }
@@ -69,9 +74,19 @@ namespace SimplySqlSchema.Manager.Implementations
                 CreateNameString(schema),
                 CreateTypeString(schema) + CreateSizeAppendString(schema),
                 CreateNullableString(schema),
-                CreateKeyString(schema),
                 CreateDefaultValueString(schema),
             });
+        }
+
+        protected virtual string CreatePkStatement(ObjectSchema schema)
+        {
+            var primaryKeys = schema.Columns.Where(c => c.Value.KeyIndex.HasValue).OrderBy(c => c.Value.KeyIndex);
+            if (!primaryKeys.Any())
+            {
+                return string.Empty;
+            }
+
+            return $"CONSTRAINT PK_{schema.Name} PRIMARY KEY ({string.Join(",", primaryKeys.Select(pk => pk.Key))})";
         }
 
         protected virtual string CreateNameString(ColumnSchema schema) => schema.Name;
@@ -79,8 +94,6 @@ namespace SimplySqlSchema.Manager.Implementations
         protected virtual string CreateTypeString(ColumnSchema schema) => this.Mapper.GetSqlType(schema.Type);
 
         protected virtual string CreateNullableString(ColumnSchema schema) => schema.Nullable ? "NULL" : "NOT NULL";
-
-        protected virtual string CreateKeyString(ColumnSchema schema) => schema.KeyIndex.HasValue ? "PRIMARY KEY" : "";
 
         protected virtual string CreateSizeAppendString(ColumnSchema schema) => schema.MaxLength.HasValue ? $"({schema.MaxLength})" : "";
 
