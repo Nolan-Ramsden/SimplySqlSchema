@@ -53,7 +53,7 @@ namespace SimplySqlSchema.Extractor
                 p.PropertyType;
             if (columnType.IsEnum)
             {
-                columnType = typeof(int);
+                columnType = typeof(string);
             }
 
             Type underlyingType = Nullable.GetUnderlyingType(columnType);

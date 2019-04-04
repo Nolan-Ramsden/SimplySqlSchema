@@ -32,7 +32,7 @@ namespace SimplySqlSchema.Tests.Query
                     new ColumnSchema()
                     {
                         Name = "EnumVal",
-                        Type = typeof(int),
+                        Type = typeof(string),
                     },
                 }.ToDictionary(c => c.Name)
         };

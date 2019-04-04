@@ -14,7 +14,7 @@ namespace SimplySqlSchema
 
         public static IServiceCollection AddDictionarySchemaCache(this IServiceCollection services)
         {
-            return services.AddScoped<ISchemaCache, DictionarySchemaCache>();
+            return services.AddSingleton<ISchemaCache>(new  DictionarySchemaCache());
         }
     }
 }

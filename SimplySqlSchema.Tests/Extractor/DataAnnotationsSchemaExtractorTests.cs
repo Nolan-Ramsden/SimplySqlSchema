@@ -62,7 +62,7 @@ namespace SimplySqlSchema.Tests.Extractor
                     {
                         Name = "Enum",
                         Nullable = false,
-                        Type = typeof(int),
+                        Type = typeof(string),
                     }
                 }.ToDictionary(c => c.Name)
             };

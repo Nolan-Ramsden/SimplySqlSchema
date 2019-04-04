@@ -15,6 +15,11 @@ namespace SimplySqlSchema.Cache
             return null;
         }
 
+        public IEnumerable<string> ListObjects()
+        {
+            return this.Cache.Keys;
+        }
+
         public void Remove(string objectName)
         {
             Cache.Remove(objectName);

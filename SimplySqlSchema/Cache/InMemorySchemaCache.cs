@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace SimplySqlSchema.Cache
 {
@@ -28,6 +30,11 @@ namespace SimplySqlSchema.Cache
         public void Remove(string objectName)
         {
             this.MemoryCache.Remove(objectName);
+        }
+
+        public IEnumerable<string> ListObjects()
+        {
+            throw new NotImplementedException();
         }
     }
 }
