@@ -69,6 +69,11 @@ namespace SimplySqlSchema.Manager.Implementations
 
         protected virtual string CreateColumnString(ColumnSchema schema)
         {
+            if (schema.SqlType == null)
+            {
+                throw new ArgumentNullException($"SqlType of column {schema.Name} cannot be null");
+            }
+
             return string.Join(" ", new[]
             {
                 CreateNameString(schema),
@@ -91,7 +96,7 @@ namespace SimplySqlSchema.Manager.Implementations
 
         protected virtual string CreateNameString(ColumnSchema schema) => schema.Name;
 
-        protected virtual string CreateTypeString(ColumnSchema schema) => this.Mapper.GetSqlType(schema.Type);
+        protected virtual string CreateTypeString(ColumnSchema schema) => schema.SqlType.ToString().ToUpper();
 
         protected virtual string CreateNullableString(ColumnSchema schema) => schema.Nullable ? "NULL" : "NOT NULL";
 
@@ -101,7 +106,31 @@ namespace SimplySqlSchema.Manager.Implementations
         {
             return schema.Nullable ?
                 "DEFAULT NULL" :
-                $"DEFAULT {this.Mapper.GetDefaultExpression(CreateTypeString(schema))}";
+                $"DEFAULT {this.Mapper.GetDefaultValue(schema.SqlType)}";
+        }
+
+        protected virtual ColumnSchema ParseSqlTypeString(string typeDef)
+        {
+            var column = new ColumnSchema();
+            var typePortions = typeDef.Split('(');
+            SqlDbType sqlDbType;
+            bool validType = Enum.TryParse<SqlDbType>(typePortions[0], ignoreCase: true, result: out sqlDbType);
+            if (!validType)
+            {
+                throw new InvalidOperationException($"Column type {typeDef} could not be parsed to a SqlDbType");
+            }
+            column.SqlType = sqlDbType;
+
+            if (typePortions.Length > 1 && this.Mapper.IsLengthLimited(column.SqlType))
+            {
+                column.MaxLength = Convert.ToInt32(typePortions[1].Trim(')'));
+            }
+            return column;
+        }
+
+        public SqlDbType MapColumnType(Type dotnetType)
+        {
+            return this.Mapper.GetSqlType(dotnetType);
         }
     }
 }

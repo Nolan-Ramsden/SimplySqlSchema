@@ -72,5 +72,10 @@ namespace SimplySqlSchema.Cache
         {
             throw new NotImplementedException();
         }
+
+        public SqlDbType MapColumnType(Type dotnetType)
+        {
+            return this.Impl.MapColumnType(dotnetType);
+        }
     }
 }

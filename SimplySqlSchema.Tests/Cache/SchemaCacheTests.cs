@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -40,12 +41,12 @@ namespace SimplySqlSchema.Tests.Cache
                         Name = "Id",
                         KeyIndex = 1,
                         Nullable = false,
-                        Type = typeof(int)
+                        SqlType = SqlDbType.Int
                     },
                     new ColumnSchema()
                     {
                         Name = "Val",
-                        Type = typeof(string),
+                        SqlType = SqlDbType.NVarChar,
                         MaxLength = 100
                     },
                 }.ToDictionary(c => c.Name)
@@ -73,7 +74,7 @@ namespace SimplySqlSchema.Tests.Cache
             var newCol = new ColumnSchema()
             {
                 Name = "NewCol",
-                Type = typeof(string)
+                SqlType = SqlDbType.Bit
             };
             this.BaselineSchema.Columns["NewCol"] = newCol;
             await this.CachedManager.CreateColumn(this.Connection, this.BaselineSchema.Name, newCol);

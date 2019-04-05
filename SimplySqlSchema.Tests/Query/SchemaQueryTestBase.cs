@@ -21,18 +21,24 @@ namespace SimplySqlSchema.Tests.Query
                     {
                         Name = "Id",
                         KeyIndex = 1,
-                        Type = typeof(int)
+                        SqlType = SqlDbType.Int
                     },
                     new ColumnSchema()
                     {
                         Name = "Val",
-                        Type = typeof(string),
+                        SqlType = SqlDbType.VarChar,
                         MaxLength = 100
                     },
                     new ColumnSchema()
                     {
                         Name = "EnumVal",
-                        Type = typeof(string),
+                        SqlType = SqlDbType.VarChar,
+                        MaxLength = 100
+                    },
+                    new ColumnSchema()
+                    {
+                        Name = "BoolVal",
+                        SqlType = SqlDbType.Bit,
                     },
                 }.ToDictionary(c => c.Name)
         };
@@ -40,7 +46,8 @@ namespace SimplySqlSchema.Tests.Query
         {
             Id = 15,
             Val = "15",
-            EnumVal = TestEnum.B
+            EnumVal = TestEnum.B,
+            BoolVal = true,
         };
 
         public async Task BaseTestInsertMultipleGetEntity()
@@ -60,6 +67,7 @@ namespace SimplySqlSchema.Tests.Query
             Assert.AreEqual(15, fetched.Id, "Fetched object doesn't matched inserted");
             Assert.AreEqual("15", fetched.Val, "Fetched object doesn't matched inserted");
             Assert.AreEqual(TestEnum.B, fetched.EnumVal, "Fetched object doesn't matched inserted");
+            Assert.AreEqual(true, fetched.BoolVal, "Fetched object doesn't matched inserted");
         }
 
         public async Task BaseTestUpdateEntity()
@@ -75,6 +83,7 @@ namespace SimplySqlSchema.Tests.Query
             Assert.AreEqual(15, fetched.Id, "Fetched object doesn't matched inserted");
             Assert.AreEqual("100", fetched.Val, "Fetched object doesn't matched inserted");
             Assert.AreEqual(TestEnum.C, fetched.EnumVal, "Fetched object doesn't matched inserted");
+            Assert.AreEqual(true, fetched.BoolVal, "Fetched object doesn't matched inserted");
         }
 
         public async Task BaseTestDeleteEntity()
@@ -94,6 +103,8 @@ namespace SimplySqlSchema.Tests.Query
             public string Val { get; set; }
 
             public TestEnum EnumVal { get; set; }
+
+            public bool BoolVal { get; set; }
         }
 
         public enum TestEnum

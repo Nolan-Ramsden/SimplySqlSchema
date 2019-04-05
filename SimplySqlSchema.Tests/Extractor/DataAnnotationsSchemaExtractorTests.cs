@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Linq;
+using System.Data;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SimplySqlSchema.Extractor;
 using SimplySqlSchema.Tests.Common;
+using SimplySqlSchema.Attributes;
 
 namespace SimplySqlSchema.Tests.Extractor
 {
@@ -28,41 +30,51 @@ namespace SimplySqlSchema.Tests.Extractor
                     {
                         Name = "Key1",
                         KeyIndex = 1,
-                        Type = typeof(int),
+                        DotnetType = typeof(int),
                     },
                     new ColumnSchema()
                     {
                         Name = "Key2",
                         KeyIndex = 2,
-                        Type = typeof(string),
+                        DotnetType = typeof(string),
                     },
                     new ColumnSchema()
                     {
                         Name = "CreatedAt",
-                        Type = typeof(DateTime),
+                        DotnetType = typeof(DateTime),
                     },
                     new ColumnSchema()
                     {
                         Name = "CreatedAtNullable",
-                        Type = typeof(DateTime),
+                        DotnetType = typeof(DateTime),
                         Nullable = true,
                     },
                     new ColumnSchema()
                     {
                         Name = "Val1",
-                        Type = typeof(string),
+                        DotnetType = typeof(string),
                     },
                     new ColumnSchema()
                     {
                         Name = "Val2",
                         MaxLength = 100,
-                        Type = typeof(string),
+                        DotnetType = typeof(string),
                     },
                     new ColumnSchema()
                     {
                         Name = "Enum",
                         Nullable = false,
-                        Type = typeof(string),
+                        DotnetType = typeof(TestEnum),
+                        SqlType = SqlDbType.VarChar,
+                        MaxLength = 128
+                    },
+                    new ColumnSchema()
+                    {
+                        Name = "Nested",
+                        Nullable = true,
+                        DotnetType = typeof(TestNestedObject),
+                        SqlType = SqlDbType.VarChar,
+                        MaxLength = 1024
                     }
                 }.ToDictionary(c => c.Name)
             };
@@ -103,6 +115,17 @@ namespace SimplySqlSchema.Tests.Extractor
             public string Val2 { get; set; }
 
             public TestEnum Enum { get; set; }
+
+            [IgnoreProperty]
+            public string YouWontFindMe { get; set; }
+
+            [JsonNest]
+            public TestNestedObject Nested { get; set; }
+        }
+
+        class TestNestedObject
+        {
+
         }
 
         public enum TestEnum

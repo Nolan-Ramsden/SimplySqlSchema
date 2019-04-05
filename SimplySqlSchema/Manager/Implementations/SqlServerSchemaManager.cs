@@ -36,6 +36,12 @@ namespace SimplySqlSchema.Manager.Implementations
             };
         }
 
+        public SqlServerSchemaManager()
+        {
+            this.Mapper
+                .Override(SqlDbType.Date, "'1753-1-1'");
+        }
+
         private ColumnSchema ParseColumn(SqlServerSchemaRow row)
         {
             var column = new ColumnSchema()
@@ -43,20 +49,22 @@ namespace SimplySqlSchema.Manager.Implementations
                 Name = row.COLUMN_NAME,
                 KeyIndex = row.KEY_POSITION,
                 Nullable = row.IS_NULLABLE == "YES",
-                MaxLength = row.CHARACTER_MAXIMUM_LENGTH
+                MaxLength = row.CHARACTER_MAXIMUM_LENGTH,
             };
-            column.Type = this.Mapper.GetDotnetType(row.DATA_TYPE);
-            if (column.Type == null)
+            SqlDbType sqlDbType;
+            bool validType = Enum.TryParse<SqlDbType>(row.DATA_TYPE, ignoreCase: true, result: out sqlDbType);
+            if (!validType)
             {
-                throw new InvalidOperationException($"Uncrecognized column type {row.DATA_TYPE}");
+                throw new InvalidOperationException($"Column type {row.DATA_TYPE} could not be parsed to a SqlDbType");
             }
+            column.SqlType = sqlDbType;
             return column;
         }
 
         public override async Task DeleteColumn(IDbConnection connection, string objectName, string columnName)
         {
             await connection.ExecuteAsync($@"
-                ALTER TABLE {objectName} DROP CONSTRAINT Default_{columnName}
+                ALTER TABLE {objectName} DROP CONSTRAINT defaultval_{columnName}
             ");
 
             await base.DeleteColumn(connection, objectName, columnName);
@@ -64,7 +72,12 @@ namespace SimplySqlSchema.Manager.Implementations
 
         protected override string CreateDefaultValueString(ColumnSchema schema)
         {
-            return $"CONSTRAINT default_{schema.Name} {base.CreateDefaultValueString(schema)}";
+            if (schema.SqlType == SqlDbType.Timestamp)
+            {
+                return string.Empty;
+            }
+
+            return $"CONSTRAINT defaultval_{schema.Name} {base.CreateDefaultValueString(schema)}";
         }
 
         class SqlServerSchemaRow

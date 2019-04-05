@@ -31,6 +31,12 @@ namespace SimplySqlSchema.Tests.Manager
         }
 
         [TestMethod]
+        public async Task TestCreateColumnForAllTypes()
+        {
+            await this.BaseTestCreateColumnForAllTypes();
+        }
+
+        [TestMethod]
         public async Task TestAddColumnOnSchema()
         {
             await base.BaseTestAddColumnOnSchema();

@@ -37,23 +37,10 @@ namespace SimplySqlSchema.Manager.Implementations
 
         private ColumnSchema ParseColumn(SqlLiteSchemaRow row)
         {
-            var column = new ColumnSchema()
-            {
-                Name = row.name,
-                KeyIndex = row.pk == 0 ? null : new Nullable<int>(row.pk),
-                Nullable = row.notnull == 0,
-            };
-            var typePortions = row.type.Split(',')[0].Split('(');
-            column.Type = this.Mapper.GetDotnetType(typePortions[0]);
-            if (column.Type == null)
-            {
-                throw new InvalidOperationException($"Uncrecognized column type {typePortions[0]}");
-            }
-            if (typePortions.Length > 1)
-            {
-                column.MaxLength = Convert.ToInt32(typePortions[1].Trim(')'));
-            }
-            
+            var column = this.ParseSqlTypeString(row.type);
+            column.Name = row.name;
+            column.KeyIndex = row.pk == 0 ? null : new Nullable<int>(row.pk);
+            column.Nullable = row.notnull == 0;
             return column;
         }
 

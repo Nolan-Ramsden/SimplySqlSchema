@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Data;
 
 namespace SimplySqlSchema.Attributes
 {
     public class AliasTypeAttribute : Attribute
     {
-        public Type AsType { get; }
+        public SqlDbType AsType { get; }
 
-        public AliasTypeAttribute(Type asType)
+        public AliasTypeAttribute(SqlDbType asType)
         {
             this.AsType = asType;
         }

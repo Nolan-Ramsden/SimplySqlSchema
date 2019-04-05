@@ -1,111 +1,107 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Data;
 
 namespace SimplySqlSchema.Manager
 {
     public class TypeMapper
     {
-        static List<TypeMapping> Mappings { get; set; } = new List<TypeMapping>()
+        public Dictionary<Type, List<SqlTypeAndDefault>> Mappings { get; } = new Dictionary<Type, List<SqlTypeAndDefault>>()
         {
-            new TypeMapping(typeof(int))
-                .Add("INT", "0"),
-            new TypeMapping(typeof(bool))
-                .Add("BOOLEAN", "0"),
-            new TypeMapping(typeof(double))
-                .Add("DOUBLE", "0"),
-            new TypeMapping(typeof(DateTime))
-                .Add("DATETIME", "0")
-                .Add("TIMESTAMP", "0")
-                .Add("DATE", "0"),
-            new TypeMapping(typeof(string))
-                .Add("VARCHAR", "''")
-                .Add("NVARCHAR", "''"),
+            [typeof(int)] = new List<SqlTypeAndDefault>()
+            {
+                new SqlTypeAndDefault(SqlDbType.Int, "0"),
+            },
+            [typeof(bool)] = new List<SqlTypeAndDefault>()
+            {
+                new SqlTypeAndDefault(SqlDbType.Bit, "0"),
+            },
+            [typeof(double)] = new List<SqlTypeAndDefault>()
+            {
+                new SqlTypeAndDefault(SqlDbType.BigInt, "0"),
+            },
+            [typeof(DateTime)] = new List<SqlTypeAndDefault>()
+            {
+                new SqlTypeAndDefault(SqlDbType.DateTime, "0"),
+                new SqlTypeAndDefault(SqlDbType.Timestamp, "0"),
+                new SqlTypeAndDefault(SqlDbType.Date, "0"),
+            },
+            [typeof(string)] = new List<SqlTypeAndDefault>()
+            {
+                new SqlTypeAndDefault(SqlDbType.VarChar, "''", true),
+            },
         };
 
-        public TypeMapper Override(Type dotnetType, string sqlType, string defaultExpression)
+        public SqlDbType GetSqlType(Type dotnetType)
         {
-            sqlType = sqlType.ToUpper();
-            var mapping = Mappings.SingleOrDefault(m => m.DotnetType == dotnetType);
-            if (mapping == null)
-            {
-                mapping = new TypeMapping(dotnetType)
-                    .Add(sqlType, defaultExpression);
-                Mappings.Add(mapping);
-                return this;
-            }
-
-            var existingSqlType = mapping.SqlTypes.SingleOrDefault(t => t.TypeName == sqlType);
-            if (existingSqlType == null)
-            {
-                mapping.Add(sqlType, defaultExpression);
-                return this;
-            }
-
-            existingSqlType.DefaultValueExpression = defaultExpression;
-            return this;
-        }
-
-        public string GetSqlType(Type dotnetType)
-        {
-            var mapping = Mappings.SingleOrDefault(m => m.DotnetType == dotnetType);
-            if (mapping == null)
+            if (!Mappings.ContainsKey(dotnetType))
             {
                 throw new NotImplementedException($"No Sql type mapping for type {dotnetType.Name}");
             }
-            return mapping.SqlTypes.First().TypeName;
+            return Mappings[dotnetType].First().SqlType;
         }
 
-        public Type GetDotnetType(string sqlType)
+        public string GetDefaultValue(SqlDbType? sqlType)
         {
-            sqlType = sqlType.ToUpper();
-            var mapping = Mappings.SingleOrDefault(m => m.SqlTypes.Any(s => s.TypeName == sqlType));
+            if (sqlType == null)
+            {
+                throw new ArgumentNullException(nameof(sqlType));
+            }
+
+            var mapping = Mappings.Values.SelectMany(m => m).SingleOrDefault(s => s.SqlType == sqlType);
             if (mapping == null)
             {
                 throw new NotImplementedException($"No dotnet type mapping for type {sqlType}");
             }
-            return mapping.DotnetType;
+            return mapping.DefaultValue;
         }
 
-        public string GetDefaultExpression(string sqlType)
+        public bool IsLengthLimited(SqlDbType? sqlType)
         {
-            sqlType = sqlType.ToUpper();
-            var mapping = Mappings.SelectMany(m => m.SqlTypes).SingleOrDefault(s => s.TypeName == sqlType);
+            if (sqlType == null)
+            {
+                throw new ArgumentNullException(nameof(sqlType));
+            }
+
+            var mapping = Mappings.Values.SelectMany(m => m).SingleOrDefault(s => s.SqlType == sqlType);
             if (mapping == null)
             {
                 throw new NotImplementedException($"No dotnet type mapping for type {sqlType}");
             }
-            return mapping.DefaultValueExpression;
+            return mapping.HasLength;
         }
 
-        class TypeMapping
+        public TypeMapper Override(SqlDbType sqlDbType, string defaultValue, bool hasLength = false)
         {
-            public Type DotnetType { get; set; }
-
-            public List<SqlType> SqlTypes { get; set; } = new List<SqlType>();
-
-            public TypeMapping(Type dotnetType)
+            var mapping = new SqlTypeAndDefault(sqlDbType, defaultValue, hasLength);
+            foreach(var keyVal in this.Mappings)
             {
-                this.DotnetType = dotnetType;
+                foreach(var typeAndDef in keyVal.Value)
+                {
+                    if (typeAndDef.SqlType == sqlDbType)
+                    {
+                        typeAndDef.DefaultValue = defaultValue;
+                        typeAndDef.HasLength = hasLength;
+                    }
+                }
             }
-
-            public TypeMapping Add(string typeName, string expr)
-            {
-                this.SqlTypes.Add(new SqlType(typeName, expr));
-                return this;
-            }
+            return this;
         }
 
-        class SqlType
+        public class SqlTypeAndDefault
         {
-            public string TypeName { get; set; }
+            public SqlDbType SqlType { get; set; }
 
-            public string DefaultValueExpression { get; set; }
+            public string DefaultValue { get; set; }
 
-            public SqlType(string typeName, string expr)
+            public bool HasLength { get; set; }
+
+            public SqlTypeAndDefault(SqlDbType sqlType, string defaultValue, bool hasLength = false)
             {
-                this.TypeName = typeName;
-                this.DefaultValueExpression = expr;
+                this.SqlType = sqlType;
+                this.DefaultValue = defaultValue;
+                this.HasLength = hasLength;
             }
         }
     }

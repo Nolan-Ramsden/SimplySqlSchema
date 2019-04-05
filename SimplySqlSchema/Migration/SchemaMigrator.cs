@@ -11,6 +11,16 @@ namespace SimplySqlSchema.Migration
         public async Task<SchemaMigrationPlan> PlanMigration(IDbConnection connection, ISchemaManager targetManager, ObjectSchema targetSchema, MigrationOptions options)
         {
             options = options ?? new MigrationOptions();
+
+            // Whichever columns are mapped to SqlType, we let the manager decide the best choice
+            foreach (var column in targetSchema.Columns.Values)
+            {
+                if (column.SqlType == null)
+                {
+                    column.SqlType = targetManager.MapColumnType(column.DotnetType);
+                }
+            }
+
             var report = new SchemaMigrationPlan()
             {
                 Target = targetSchema,
@@ -27,6 +37,7 @@ namespace SimplySqlSchema.Migration
                 });
                 return report;
             }
+
 
             if (options.ForceDropRecreate)
             {
@@ -169,7 +180,7 @@ namespace SimplySqlSchema.Migration
                 throw new InvalidOperationException($"Cannot migrate column {target.Name} of {report.Target.Name}, keys can't be changed");
             }
 
-            if (target.Type != existing.Type)
+            if (target.SqlType != existing.SqlType)
             {
                 mismatched = true;
                 options.AssertColumnDeleteAllowed(report.Target.Name, target.Name, "type");

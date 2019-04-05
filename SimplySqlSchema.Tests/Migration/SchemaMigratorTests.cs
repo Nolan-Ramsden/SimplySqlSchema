@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
@@ -36,12 +37,17 @@ namespace SimplySqlSchema.Tests.Migration
                     {
                         Name = "Id",
                         KeyIndex = 1,
-                        Type = typeof(int)
+                        SqlType = SqlDbType.Int
                     },
                     new ColumnSchema()
                     {
                         Name = "Val",
-                        Type = typeof(string)
+                        SqlType = SqlDbType.VarChar
+                    },
+                    new ColumnSchema()
+                    {
+                        Name = "DotnetStringVal",
+                        DotnetType = typeof(string)
                     },
                 }.ToDictionary(c => c.Name)
             };
@@ -86,7 +92,7 @@ namespace SimplySqlSchema.Tests.Migration
             this.BaselineSchema.Columns["NewColumn"] = new ColumnSchema()
             {
                 Name = "NewColumn",
-                Type = typeof(DateTime)
+                SqlType = SqlDbType.DateTime
             };
 
             var plan = await this.Migrator.PlanMigration(

@@ -10,15 +10,17 @@ namespace SimplySqlSchema.Delegator
         protected IObjectSchemaExtractor Extractor { get; }
         protected IEnumerable<ISchemaQuerier> Queriers { get; }
         protected IEnumerable<ISchemaManager> Managers { get; }
+        protected ISchemaCache SchemaCache { get; }
         
-        public SchemaManagerDelegator(IEnumerable<ISchemaManager> managers = null, IEnumerable<ISchemaQuerier> queriers = null, IObjectSchemaExtractor extractor = null)
+        public SchemaManagerDelegator(IEnumerable<ISchemaManager> managers = null, IEnumerable<ISchemaQuerier> queriers = null, IObjectSchemaExtractor extractor = null, ISchemaCache schemaCache = null)
         {
             this.Managers = managers;
             this.Queriers = queriers;
             this.Extractor = extractor;
+            this.SchemaCache = schemaCache;
         }
 
-        public ISchemaManager GetSchemaManager(BackendType backendType)
+        public ISchemaManager GetSchemaManager(BackendType backendType, bool cacheWrap = false)
         {
             if (this.Managers == null)
             {
@@ -30,6 +32,10 @@ namespace SimplySqlSchema.Delegator
                 throw new NotImplementedException($"No manager backend type  for {backendType}");
             }
 
+            if (cacheWrap)
+            {
+                return new CachedSchemaManager(this.SchemaCache, manager);
+            }
             return manager;
         }
 
@@ -47,11 +53,16 @@ namespace SimplySqlSchema.Delegator
             return querier;
         }
 
-        public IObjectSchemaExtractor GetSchemaExtractor()
+        public IObjectSchemaExtractor GetSchemaExtractor(bool cacheWrap = false)
         {
             if (this.Extractor == null)
             {
                 throw new InvalidOperationException($"No SchemaExtractor registered");
+            }
+
+            if (cacheWrap)
+            {
+                return new CachedObjectSchemaExtractor(this.SchemaCache, this.Extractor);
             }
 
             return this.Extractor;

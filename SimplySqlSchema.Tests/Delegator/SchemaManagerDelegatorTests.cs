@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Data;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SimplySqlSchema.Cache;
 using SimplySqlSchema.Delegator;
 using SimplySqlSchema.Manager.Implementations;
 using SimplySqlSchema.Tests.Common;
@@ -42,7 +42,7 @@ namespace SimplySqlSchema.Tests.Delegator
                     ["Key"] = new ColumnSchema()
                     {
                         Name = "Key",
-                        Type = typeof(int),
+                        SqlType = SqlDbType.Int,
                         KeyIndex = 1
                     }
                 }

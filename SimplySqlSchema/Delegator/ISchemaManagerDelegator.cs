@@ -2,10 +2,10 @@
 {
     public interface ISchemaManagerDelegator
     {
-        ISchemaManager GetSchemaManager(BackendType backendType);
+        ISchemaManager GetSchemaManager(BackendType backendType, bool cacheWrap = false);
 
         ISchemaQuerier GetSchemaQuerier(BackendType backendType);
 
-        IObjectSchemaExtractor GetSchemaExtractor();
+        IObjectSchemaExtractor GetSchemaExtractor(bool cacheWrap = false);
     }
 }

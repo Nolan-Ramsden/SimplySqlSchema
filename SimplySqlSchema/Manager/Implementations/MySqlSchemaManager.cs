@@ -47,22 +47,10 @@ namespace SimplySqlSchema.Manager.Implementations
 
         private ColumnSchema ParseColumn(MySqlSchemaRow row, int keyIndex)
         {
-            var column = new ColumnSchema()
-            {
-                Name = row.Field,
-                KeyIndex = row.Key != "PRI" ? null : (int?)keyIndex,
-                Nullable = row.Null == "YES",
-            };
-            var typePortions = row.Type.Split(',')[0].Split('(');
-            column.Type = this.Mapper.GetDotnetType(typePortions[0]);
-            if (column.Type == null)
-            {
-                throw new InvalidOperationException($"Uncrecognized column type {typePortions[0]}");
-            }
-            if (typePortions.Length > 1 && column.Type == typeof(string))
-            {
-                column.MaxLength = Convert.ToInt32(typePortions[1].Trim(')'));
-            }
+            var column = this.ParseSqlTypeString(row.Type);
+            column.Name = row.Field;
+            column.KeyIndex = row.Key != "PRI" ? null : (int?)keyIndex;
+            column.Nullable = row.Null == "YES";
             return column;
         }
 

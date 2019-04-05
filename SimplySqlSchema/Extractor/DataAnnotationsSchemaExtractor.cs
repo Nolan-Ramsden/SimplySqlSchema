@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Data;
 using System.Reflection;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -27,7 +28,7 @@ namespace SimplySqlSchema.Extractor
 
             var index = 1;
             var columns = new List<ColumnSchema>();
-            foreach(var property in t.GetProperties())
+            foreach(var property in t.GetProperties().Where(p => p.GetCustomAttribute<IgnorePropertyAttribute>() == null))
             {
                 var column = ParseProperty(property, index);
                 if (column.KeyIndex > 0)
@@ -47,24 +48,54 @@ namespace SimplySqlSchema.Extractor
 
         protected ColumnSchema ParseProperty(PropertyInfo p, int keyIndex)
         {
-            bool isKey = p.GetCustomAttribute<KeyAttribute>() != null;
-            Type columnType =
-                p.GetCustomAttribute<AliasTypeAttribute>()?.AsType ??
-                p.PropertyType;
-            if (columnType.IsEnum)
+            Type dotnetType = p.PropertyType;
+            Type underlyingType = Nullable.GetUnderlyingType(dotnetType);
+            if (underlyingType != null)
             {
-                columnType = typeof(string);
+                dotnetType = underlyingType;
+            }
+            bool isKey = p.GetCustomAttribute<KeyAttribute>() != null;
+            int? pk = isKey ? (int?)keyIndex : null;
+
+            var jsonNested = p.GetCustomAttribute<JsonNestAttribute>();
+            if (jsonNested != null)
+            {
+                return this.CreateJsonNestedColumn(p, pk, jsonNested, dotnetType);
             }
 
-            Type underlyingType = Nullable.GetUnderlyingType(columnType);
+            int? maxLength = p.GetCustomAttribute<MaxLengthAttribute>()?.Length;
+            SqlDbType? sqlType = p.GetCustomAttribute<AliasTypeAttribute>()?.AsType;
+            if (sqlType == null)
+            {
+                if (dotnetType.IsEnum)
+                {
+                    sqlType = SqlDbType.VarChar;
+                    maxLength = 128;
+                }
+            }
 
             return new ColumnSchema()
             {
                 Name = p.Name,
-                Type = underlyingType ?? columnType,
+                DotnetType = dotnetType,
                 Nullable = underlyingType != null,
-                MaxLength = p.GetCustomAttribute<MaxLengthAttribute>()?.Length,
-                KeyIndex = isKey ? (int?)keyIndex : null,
+                MaxLength = maxLength,
+                KeyIndex = pk,
+                SqlType = sqlType
+            };
+        }
+
+        protected ColumnSchema CreateJsonNestedColumn(PropertyInfo p, int? keyIndex, JsonNestAttribute jsonNest, Type dotnetType)
+        {
+            Dapper.SqlMapper.AddTypeHandler(dotnetType, new JsonNestMapper());
+            return new ColumnSchema()
+            {
+                Name = p.Name,
+                DotnetType = dotnetType,
+                Nullable = true,
+                MaxLength = jsonNest.MaxLength,
+                KeyIndex = keyIndex,
+                SqlType = SqlDbType.VarChar
             };
         }
     }

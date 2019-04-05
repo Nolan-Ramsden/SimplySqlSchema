@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 
 namespace SimplySqlSchema
 {
@@ -6,7 +7,9 @@ namespace SimplySqlSchema
     {
         public string Name { get; set; }
 
-        public Type Type { get; set; }
+        public Type DotnetType { get; set; }
+
+        public SqlDbType? SqlType { get; set; }
 
         public bool Nullable { get; set; }
 

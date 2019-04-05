@@ -31,10 +31,14 @@ namespace SimplySqlSchema.Tests.Common
         public static void AssertColumnSchemasEqual(ColumnSchema a, ColumnSchema b)
         {
             Assert.AreEqual(a.Name, b.Name, $"Column '{a.Name}' names don't match");
-            Assert.AreEqual(a.Type, b.Type, $"Column '{a.Name}' types don't match");
+            Assert.AreEqual(a.SqlType, b.SqlType, $"Column '{a.Name}' types don't match");
             Assert.AreEqual(a.KeyIndex, b.KeyIndex, $"Column '{a.Name}' key indexes don't match");
             Assert.AreEqual(a.Nullable, b.Nullable, $"Column '{a.Name}' nullability don't match");
             Assert.AreEqual(a.MaxLength, b.MaxLength, $"Column '{a.Name}' max lengths don't match");
+            if (a.SqlType == null && b.SqlType == null)
+            {
+                Assert.AreEqual(a.DotnetType, b.DotnetType, $"Column '{a.Name}' types don't match");
+            }
         }
 
         public static void AssertIndexSchemasEqual(IndexSchema a, IndexSchema b)

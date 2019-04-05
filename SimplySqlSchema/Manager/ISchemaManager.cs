@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Threading.Tasks;
 
 namespace SimplySqlSchema
@@ -16,5 +17,7 @@ namespace SimplySqlSchema
         Task CreateIndex(IDbConnection connection, string objectName, IndexSchema indexSchema);
 
         Task DeleteIndex(IDbConnection connection, string objectName, string indexName);
+
+        SqlDbType MapColumnType(Type dotnetType);
     }
 }
