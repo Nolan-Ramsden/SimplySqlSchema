@@ -78,7 +78,7 @@ namespace SimplySqlSchema.Extractor
             {
                 Name = p.Name,
                 DotnetType = dotnetType,
-                Nullable = underlyingType != null,
+                Nullable = underlyingType != null || dotnetType == typeof(string),
                 MaxLength = maxLength,
                 KeyIndex = pk,
                 SqlType = sqlType

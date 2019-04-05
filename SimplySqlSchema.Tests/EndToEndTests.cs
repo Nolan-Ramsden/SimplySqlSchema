@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.SQLite;
@@ -62,6 +63,19 @@ namespace SimplySqlSchema.Tests
                     ApartmentNumber = 211,
                     IsApartment = true,
                     Street = "Not tellin ya"
+                },
+                Attributes = new List<TestAttribute>()
+                {
+                    new TestAttribute()
+                    {
+                        Attribute = "Hair-Colour",
+                        Value = "Blonde"
+                    },
+                    new TestAttribute()
+                    {
+                        Attribute = "Eye-Colour",
+                        Value = "Green"
+                    },
                 }
             };
 
@@ -88,6 +102,11 @@ namespace SimplySqlSchema.Tests
             Assert.AreEqual(nolan.Address.Street, fetchedNolan.Address.Street);
             Assert.AreEqual(nolan.Address.IsApartment, fetchedNolan.Address.IsApartment);
             Assert.AreEqual(nolan.Address.ApartmentNumber, fetchedNolan.Address.ApartmentNumber);
+            Assert.AreEqual(nolan.Attributes.Count, fetchedNolan.Attributes.Count);
+            Assert.AreEqual(nolan.Attributes[0].Attribute, fetchedNolan.Attributes[0].Attribute);
+            Assert.AreEqual(nolan.Attributes[0].Value, fetchedNolan.Attributes[0].Value);
+            Assert.AreEqual(nolan.Attributes[1].Attribute, fetchedNolan.Attributes[1].Attribute);
+            Assert.AreEqual(nolan.Attributes[1].Value, fetchedNolan.Attributes[1].Value);
         }
 
         [TestCleanup]
@@ -115,6 +134,9 @@ namespace SimplySqlSchema.Tests
 
             [JsonNest]
             public TestAddress Address { get; set; }
+
+            [JsonNest]
+            public List<TestAttribute> Attributes { get; set; }
         }
 
         class TestAddress
@@ -124,6 +146,13 @@ namespace SimplySqlSchema.Tests
             public bool IsApartment { get; set; }
 
             public int? ApartmentNumber { get; set; }
+        }
+
+        class TestAttribute
+        {
+            public string Attribute { get; set; }
+
+            public string Value { get; set; }
         }
     }
 }
