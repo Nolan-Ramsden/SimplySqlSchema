@@ -52,11 +52,13 @@ namespace SimplySqlSchema.Tests.Extractor
                     new ColumnSchema()
                     {
                         Name = "Val1",
+                        Nullable = true,
                         DotnetType = typeof(string),
                     },
                     new ColumnSchema()
                     {
                         Name = "Val2",
+                        Nullable = true,
                         MaxLength = 100,
                         DotnetType = typeof(string),
                     },

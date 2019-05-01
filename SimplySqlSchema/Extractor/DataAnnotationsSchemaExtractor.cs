@@ -74,11 +74,17 @@ namespace SimplySqlSchema.Extractor
                 }
             }
 
+            bool nullable = underlyingType != null || dotnetType == typeof(string);
+            if (pk.HasValue)
+            {
+                nullable = false;
+            }
+
             return new ColumnSchema()
             {
                 Name = p.Name,
                 DotnetType = dotnetType,
-                Nullable = underlyingType != null || dotnetType == typeof(string),
+                Nullable = nullable,
                 MaxLength = maxLength,
                 KeyIndex = pk,
                 SqlType = sqlType
@@ -92,7 +98,7 @@ namespace SimplySqlSchema.Extractor
             {
                 Name = p.Name,
                 DotnetType = dotnetType,
-                Nullable = true,
+                Nullable = !keyIndex.HasValue,
                 MaxLength = jsonNest.MaxLength,
                 KeyIndex = keyIndex,
                 SqlType = SqlDbType.VarChar

@@ -46,7 +46,7 @@ namespace SimplySqlSchema.Tests.Cache
                     new ColumnSchema()
                     {
                         Name = "Val",
-                        SqlType = SqlDbType.NVarChar,
+                        SqlType = SqlDbType.VarChar,
                         MaxLength = 100
                     },
                 }.ToDictionary(c => c.Name)
