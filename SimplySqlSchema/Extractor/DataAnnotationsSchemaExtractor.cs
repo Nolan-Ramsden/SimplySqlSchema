@@ -69,12 +69,17 @@ namespace SimplySqlSchema.Extractor
             {
                 if (dotnetType.IsEnum)
                 {
-                    sqlType = SqlDbType.VarChar;
-                    maxLength = 128;
+                    sqlType = SqlDbType.Int;
                 }
             }
 
-            bool nullable = underlyingType != null || dotnetType == typeof(string);
+            bool nullable = underlyingType != null;
+            if (dotnetType == typeof(string))
+            {
+                nullable = true;
+                maxLength = maxLength ?? 256;
+            }
+
             if (pk.HasValue)
             {
                 nullable = false;

@@ -1,13 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>2.1.0</Version>
+    <Version>2.1.2</Version>
     <Authors>Nolan Ramsden</Authors>
     <PackageId>SimplySqlSchema</PackageId>
   </PropertyGroup>
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Funcationality to create/migrate/query SQL tables</Description>
+    <PackageProjectUrl>https://github.com/Nolan-Ramsden/SimplySqlSchema</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Nolan-Ramsden/SimplySqlSchema</RepositoryUrl>
+    <RepositoryType>github</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>

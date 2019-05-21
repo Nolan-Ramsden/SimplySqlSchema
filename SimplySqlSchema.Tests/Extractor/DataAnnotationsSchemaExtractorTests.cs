@@ -36,6 +36,7 @@ namespace SimplySqlSchema.Tests.Extractor
                     {
                         Name = "Key2",
                         KeyIndex = 2,
+                        MaxLength = 256,
                         DotnetType = typeof(string),
                     },
                     new ColumnSchema()
@@ -52,6 +53,7 @@ namespace SimplySqlSchema.Tests.Extractor
                     new ColumnSchema()
                     {
                         Name = "Val1",
+                        MaxLength = 256,
                         Nullable = true,
                         DotnetType = typeof(string),
                     },
@@ -67,8 +69,7 @@ namespace SimplySqlSchema.Tests.Extractor
                         Name = "Enum",
                         Nullable = false,
                         DotnetType = typeof(TestEnum),
-                        SqlType = SqlDbType.VarChar,
-                        MaxLength = 128
+                        SqlType = SqlDbType.Int,
                     },
                     new ColumnSchema()
                     {

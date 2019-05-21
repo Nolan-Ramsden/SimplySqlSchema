@@ -64,20 +64,25 @@ namespace SimplySqlSchema.Manager.Implementations
         public override async Task DeleteColumn(IDbConnection connection, string objectName, string columnName)
         {
             await connection.ExecuteAsync($@"
-                ALTER TABLE {objectName} DROP CONSTRAINT defaultval_{columnName}
+                ALTER TABLE {objectName} DROP CONSTRAINT {CreateConstraintName(objectName, columnName)}
             ");
 
             await base.DeleteColumn(connection, objectName, columnName);
         }
 
-        protected override string CreateDefaultValueString(ColumnSchema schema)
+        protected override string CreateDefaultValueString(string objectName, ColumnSchema schema)
         {
             if (schema.SqlType == SqlDbType.Timestamp)
             {
                 return string.Empty;
             }
 
-            return $"CONSTRAINT defaultval_{schema.Name} {base.CreateDefaultValueString(schema)}";
+            return $"CONSTRAINT {CreateConstraintName(objectName, schema.Name)} {base.CreateDefaultValueString(objectName, schema)}";
+        }
+
+        protected string CreateConstraintName(string objectName, string columnName)
+        {
+            return $"defaultval_{objectName}_{columnName}";
         }
 
         class SqlServerSchemaRow

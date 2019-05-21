@@ -21,7 +21,7 @@ namespace SimplySqlSchema.Manager.Implementations
         public virtual async Task CreateObject(IDbConnection connection, ObjectSchema objectSchema)
         {
             var statements = new List<string>();
-            statements.AddRange(objectSchema.Columns.Values.Select(CreateColumnString));
+            statements.AddRange(objectSchema.Columns.Values.Select(c => CreateColumnString(objectSchema.Name, c)));
             statements.Add(this.CreatePkStatement(objectSchema));
 
             var allStatements = string.Join(
@@ -46,7 +46,7 @@ namespace SimplySqlSchema.Manager.Implementations
         public virtual async Task CreateColumn(IDbConnection connection, string objectName, ColumnSchema columnSchema)
         {
             await connection.ExecuteAsync($@"
-                ALTER TABLE {objectName} ADD {CreateColumnString(columnSchema)}
+                ALTER TABLE {objectName} ADD {CreateColumnString(objectName, columnSchema)}
             ");
         }
 
@@ -67,7 +67,7 @@ namespace SimplySqlSchema.Manager.Implementations
             throw new NotImplementedException();
         }
 
-        protected virtual string CreateColumnString(ColumnSchema schema)
+        protected virtual string CreateColumnString(string objectName, ColumnSchema schema)
         {
             if (schema.SqlType == null)
             {
@@ -79,7 +79,7 @@ namespace SimplySqlSchema.Manager.Implementations
                 CreateNameString(schema),
                 CreateTypeString(schema) + CreateSizeAppendString(schema),
                 CreateNullableString(schema),
-                CreateDefaultValueString(schema),
+                CreateDefaultValueString(objectName, schema),
             });
         }
 
@@ -102,7 +102,7 @@ namespace SimplySqlSchema.Manager.Implementations
 
         protected virtual string CreateSizeAppendString(ColumnSchema schema) => schema.MaxLength.HasValue ? $"({schema.MaxLength})" : "";
 
-        protected virtual string CreateDefaultValueString(ColumnSchema schema)
+        protected virtual string CreateDefaultValueString(string objectName, ColumnSchema schema)
         {
             return schema.Nullable ?
                 "DEFAULT NULL" :

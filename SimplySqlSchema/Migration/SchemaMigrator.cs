@@ -204,13 +204,13 @@ namespace SimplySqlSchema.Migration
                 report.Steps.Add(new MigrationStep()
                 {
                     TargetName = target.Name,
-                    Action = MigrationAction.Create,
+                    Action = MigrationAction.Drop,
                     TargetType = MigrationTarget.Column,
                 });
                 report.Steps.Add(new MigrationStep()
                 {
                     TargetName = target.Name,
-                    Action = MigrationAction.Drop,
+                    Action = MigrationAction.Create,
                     TargetType = MigrationTarget.Column,
                 });
                 return;
