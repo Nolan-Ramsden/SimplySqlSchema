@@ -6,11 +6,11 @@ Some crappy little abstractions over SQL, for creating, migrating and querying t
 
 ## Useful Features
 
-- Schema Extraction From DotNet Objects ([IObjectSchemaSchemaExtractor.cs](SimplySqlSchema\Extractor\IObjectSchemaExtractor.cs))
-- Table Creation from Schemas ([ISchemaManager.cs](SimplySqlSchema\Manager\ISchemaManager.cs))
-- Schema Migration between Releases ([ISchemaMigrator.cs](SimplySqlSchema\Migration\ISchemaMigrator.cs))
-- Support for SQLite, SqlServer and MySQL ([ISchemaManagerDelegator.cs](SimplySqlSchema\Delegator\ISchemaManagerDelegator.cs))
-- Basic CRUD Support for Schemas ([ISchemaQuerier.cs](SimplySqlSchema\Query\ISchemaQuerier.cs))
+- Schema Extraction From DotNet Objects ([IObjectSchemaSchemaExtractor.cs](SimplySqlSchema/Extractor/IObjectSchemaExtractor.cs))
+- Table Creation from Schemas ([ISchemaManager.cs](SimplySqlSchema/Manager/ISchemaManager.cs))
+- Schema Migration between Releases ([ISchemaMigrator.cs](SimplySqlSchema/Migration/ISchemaMigrator.cs))
+- Support for SQLite, SqlServer and MySQL ([ISchemaManagerDelegator.cs](SimplySqlSchema/Delegator/ISchemaManagerDelegator.cs))
+- Basic CRUD Support for Schemas ([ISchemaQuerier.cs](SimplySqlSchema/Query/ISchemaQuerier.cs))
 
 
 ## Example Usage
