@@ -2,6 +2,8 @@
 
 Some crappy little abstractions over SQL, for creating, migrating and querying tables.
 
+[Available On Nuget](https://www.nuget.org/packages/SimplySqlSchema/)
+
 ## Useful Features
 
 - Schema Extraction From DotNet Objects ([IObjectSchemaSchemaExtractor.cs](SimplySqlSchema\Extractor\IObjectSchemaExtractor.cs))
