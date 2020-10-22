@@ -2,8 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using SimplySqlSchema.Query;
 
-namespace SimplySqlSchema.Query
+namespace SimplySqlSchema.SqlServer
 {
     public class SqlServerQuerier : SchemaQuerier
     {

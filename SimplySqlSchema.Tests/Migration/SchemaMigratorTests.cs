@@ -1,14 +1,13 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SimplySqlSchema.Manager.Implementations;
 using SimplySqlSchema.Migration;
 using SimplySqlSchema.Tests.Common;
+using SimplySqlSchema.SQLite;
 
 namespace SimplySqlSchema.Tests.Migration
 {
@@ -74,7 +73,7 @@ namespace SimplySqlSchema.Tests.Migration
             Assert.AreEqual(this.BaselineSchema.Name, plan.Steps[0].TargetName, "Only step should target the table");
             Assert.AreEqual(MigrationTarget.Object, plan.Steps[0].TargetType, "Only step should target the table");
 
-            await this.Migrator.Execute(
+            await this.Migrator.ExecuteMigration(
                 targetManager: this.Manager,
                 connection: this.Connection,
                 plan: plan
@@ -108,7 +107,7 @@ namespace SimplySqlSchema.Tests.Migration
             Assert.AreEqual("NewColumn", plan.Steps[0].TargetName, "Only step should target the column");
             Assert.AreEqual(MigrationTarget.Column, plan.Steps[0].TargetType, "Only step should target the column");
 
-            await this.Migrator.Execute(
+            await this.Migrator.ExecuteMigration(
                 targetManager: this.Manager,
                 connection: this.Connection,
                 plan: plan

@@ -1,4 +1,6 @@
-﻿namespace SimplySqlSchema.Query
+﻿using SimplySqlSchema.Query;
+
+namespace SimplySqlSchema.MySql
 {
     public class MySqlQuerier : SchemaQuerier
     {

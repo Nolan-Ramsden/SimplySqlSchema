@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using Dapper;
+using SimplySqlSchema.Manager;
 
-namespace SimplySqlSchema.Manager.Implementations
+namespace SimplySqlSchema.SqlServer
 {
     public class SqlServerSchemaManager : SqlSchemaManager
     {

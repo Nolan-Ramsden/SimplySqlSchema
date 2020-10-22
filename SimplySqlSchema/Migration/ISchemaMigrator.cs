@@ -8,6 +8,6 @@ namespace SimplySqlSchema
     {
         Task<SchemaMigrationPlan> PlanMigration(IDbConnection connection, ISchemaManager targetManager, ObjectSchema targetSchema, MigrationOptions options);
 
-        Task<SchemaMigrationPlan> Execute(IDbConnection connection, ISchemaManager targetManager, SchemaMigrationPlan plan);
+        Task<SchemaMigrationPlan> ExecuteMigration(IDbConnection connection, ISchemaManager targetManager, SchemaMigrationPlan migrationPlan);
     }
 }

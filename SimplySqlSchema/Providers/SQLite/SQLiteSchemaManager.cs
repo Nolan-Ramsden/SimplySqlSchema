@@ -4,8 +4,9 @@ using System.Data;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Dapper;
+using SimplySqlSchema.Manager;
 
-namespace SimplySqlSchema.Manager.Implementations
+namespace SimplySqlSchema.SQLite
 {
     public class SQLiteSchemaManager : SqlSchemaManager
     {

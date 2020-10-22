@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 
-namespace SimplySqlSchema.Manager.Implementations
+namespace SimplySqlSchema.Manager
 {
     public class SqlSchemaManager : ISchemaManager
     {

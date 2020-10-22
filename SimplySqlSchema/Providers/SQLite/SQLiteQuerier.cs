@@ -2,8 +2,9 @@
 using System.Data;
 using System.Threading.Tasks;
 using Dapper;
+using SimplySqlSchema.Query;
 
-namespace SimplySqlSchema.Query
+namespace SimplySqlSchema.SQLite
 {
     public class SQLiteQuerier : SchemaQuerier
     {

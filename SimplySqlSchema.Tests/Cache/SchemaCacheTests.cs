@@ -6,8 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SimplySqlSchema.Cache;
-using SimplySqlSchema.Manager.Implementations;
 using SimplySqlSchema.Tests.Common;
+using SimplySqlSchema.SQLite;
 
 namespace SimplySqlSchema.Tests.Cache
 {

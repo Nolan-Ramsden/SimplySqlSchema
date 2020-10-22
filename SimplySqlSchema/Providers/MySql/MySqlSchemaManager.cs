@@ -4,8 +4,9 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using SimplySqlSchema.Manager;
 
-namespace SimplySqlSchema.Manager.Implementations
+namespace SimplySqlSchema.MySql
 {
     public class MySqlSchemaManager : SqlSchemaManager
     {

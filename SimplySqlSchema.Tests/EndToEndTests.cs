@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
-using System.Data.SQLite;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -10,9 +9,8 @@ using SimplySqlSchema.Attributes;
 using SimplySqlSchema.Cache;
 using SimplySqlSchema.Delegator;
 using SimplySqlSchema.Extractor;
-using SimplySqlSchema.Manager.Implementations;
 using SimplySqlSchema.Migration;
-using SimplySqlSchema.Query;
+using SimplySqlSchema.SQLite;
 
 namespace SimplySqlSchema.Tests
 {
@@ -24,31 +22,33 @@ namespace SimplySqlSchema.Tests
 
         protected BackendType Backend { get; set; }
         protected IDbConnection Connection { get; set; }
-        protected ISchemaMigrator Migrator { get; set; }
-        protected ISchemaManagerDelegator Delegator { get; set; }
+        protected ISimplySqlSchema Delegator { get; set; }
 
         [TestInitialize]
         public void Setup()
         {
             this.Backend = BackendType.SQLite;
-            this.Migrator = new SchemaMigrator();
-            this.Delegator = new SchemaManagerDelegator(
+            this.Delegator = new ProviderDelegator(
+                migrator: new SchemaMigrator(),
                 managers: new[] { new SQLiteSchemaManager() },
                 queriers: new[] { new SQLiteQuerier() },
                 extractor: new DataAnnotationsSchemaExtractor(),
-                schemaCache: new DictionarySchemaCache()
+                schemaCache: new DictionarySchemaCache(),
+                connectors: new[] { new SQLiteConnectionFactory() }
             );
-            this.Connection = new SQLiteConnection($"Data Source={TestDbFile};Version=3;");
+            this.Connection = this.Delegator
+                .GetConnectionFactory(this.Backend)
+                .GetConnection($"Data Source={TestDbFile};Version=3;");
         }
 
         [TestMethod]
         public async Task TestBasicFlow()
         {
-            var schema = this.Delegator.GetSchemaExtractor().GetObjectSchema(typeof(TestUser), this.SchemaName);
+            var schema = this.Delegator.GetExtractor().GetObjectSchema(typeof(TestUser), this.SchemaName);
 
-            await this.Migrator.PlanAndMigrate(
+            await this.Delegator.GetMigrator().PlanAndMigrate(
                 connection: this.Connection,
-                targetManager: this.Delegator.GetSchemaManager(this.Backend),
+                targetManager: this.Delegator.GetManager(this.Backend),
                 targetSchema: schema,
                 options: null
             );
@@ -79,13 +79,13 @@ namespace SimplySqlSchema.Tests
                 }
             };
 
-            await this.Delegator.GetSchemaQuerier(this.Backend).Insert(
+            await this.Delegator.GetQuerier(this.Backend).Insert(
                 connection: this.Connection,
                 schema: schema,
                 obj: nolan
             );
 
-            var fetchedNolan = await this.Delegator.GetSchemaQuerier(this.Backend).Get(
+            var fetchedNolan = await this.Delegator.GetQuerier(this.Backend).Get(
                 connection: this.Connection,
                 schema: schema,
                 keyedObject: new TestUser()
@@ -112,7 +112,7 @@ namespace SimplySqlSchema.Tests
         [TestCleanup]
         public void Cleanup()
         {
-            this.Delegator.GetSchemaManager(this.Backend)
+            this.Delegator.GetManager(this.Backend)
                 .DeleteObject(this.Connection, this.SchemaName)
                 .GetAwaiter().GetResult();
             this.Connection.Dispose();

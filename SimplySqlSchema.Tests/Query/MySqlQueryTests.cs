@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MySql.Data.MySqlClient;
-using SimplySqlSchema.Manager.Implementations;
+using SimplySqlSchema.MySql;
 using SimplySqlSchema.Query;
 
 namespace SimplySqlSchema.Tests.Query

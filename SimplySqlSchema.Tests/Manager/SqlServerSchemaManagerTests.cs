@@ -1,7 +1,7 @@
 ﻿using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SimplySqlSchema.Manager.Implementations;
+using SimplySqlSchema.SqlServer;
 
 namespace SimplySqlSchema.Tests.Manager
 {

@@ -78,6 +78,14 @@ namespace SimplySqlSchema.Tests.Extractor
                         DotnetType = typeof(TestNestedObject),
                         SqlType = SqlDbType.VarChar,
                         MaxLength = 1024
+                    },
+                    new ColumnSchema()
+                    {
+                        Name = "Nested2",
+                        Nullable = true,
+                        DotnetType = typeof(object),
+                        SqlType = SqlDbType.VarChar,
+                        MaxLength = 1024
                     }
                 }.ToDictionary(c => c.Name)
             };
@@ -124,6 +132,9 @@ namespace SimplySqlSchema.Tests.Extractor
 
             [JsonNest]
             public TestNestedObject Nested { get; set; }
+
+            [JsonNest]
+            public TestNestedObject Nested2 { get; set; }
         }
 
         class TestNestedObject

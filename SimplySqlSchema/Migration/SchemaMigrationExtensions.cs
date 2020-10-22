@@ -21,10 +21,10 @@ namespace SimplySqlSchema
                 options: options
             );
 
-            await migrator.Execute(
+            await migrator.ExecuteMigration(
                 connection: connection,
                 targetManager: targetManager,
-                plan: plan
+                migrationPlan: plan
             );
         }
     }

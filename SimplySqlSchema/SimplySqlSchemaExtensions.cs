@@ -7,12 +7,10 @@ namespace SimplySqlSchema
         public static IServiceCollection AddSimplySqlSchema(this IServiceCollection services)
         {
             return services
-                .AddAllSchemaManagers()
-                .AddInMemorySchemaCache()
-                .AddSchemaManagerDelegator()
                 .AddSchemaMigrator()
-                .AddAllQueriers()
-                .AddDataAnnotationExtractor();
+                .AddInMemorySchemaCache()
+                .AddDataAnnotationExtractor()
+                .AddDelegator();
         }
     }
 }

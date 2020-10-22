@@ -78,7 +78,7 @@ namespace SimplySqlSchema.Migration
             return report;
         }
 
-        public async Task<SchemaMigrationPlan> Execute(IDbConnection connection, ISchemaManager targetManager, SchemaMigrationPlan plan)
+        public async Task<SchemaMigrationPlan> ExecuteMigration(IDbConnection connection, ISchemaManager targetManager, SchemaMigrationPlan plan)
         {
             foreach(var step in plan.Steps)
             {
